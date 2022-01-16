@@ -25,7 +25,8 @@ do { my $x = {
                       'requires' => {
                                       'B' => '0',
                                       'List::Util' => '0',
-                                      'experimental' => '0'
+                                      'experimental' => '0',
+                                      'perl' => '5.026'
                                     }
                     },
        'test' => {
