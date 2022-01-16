@@ -17,6 +17,7 @@ my %WriteMakefileArgs = (
   "NAME" => "Acme::Signature::Arity",
   "PREREQ_PM" => {
     "B" => 0,
+    "List::Util" => 0,
     "experimental" => 0
   },
   "TEST_REQUIRES" => {
@@ -27,7 +28,7 @@ my %WriteMakefileArgs = (
     "Test::CheckDeps" => "0.010",
     "Test::More" => "0.94"
   },
-  "VERSION" => "0.001",
+  "VERSION" => "0.002",
   "test" => {
     "TESTS" => "t/*.t"
   }
@@ -40,6 +41,7 @@ my %FallbackPrereqs = (
   "File::Spec" => 0,
   "IO::Handle" => 0,
   "IPC::Open3" => 0,
+  "List::Util" => 0,
   "Test::CheckDeps" => "0.010",
   "Test::More" => "0.94",
   "experimental" => 0
