@@ -24,6 +24,9 @@ If you're just curious, perhaps start with L<https://www.nntp.perl.org/group/per
 No part of this is expected to work in any way when given a sub that has a prototype.
 There are other tools for those: L<Sub::Util>.
 
+For subs that don't have a prototype, this is I<also> not expected to work. It might help
+demonstrate where to look if you wanted to write something proper, though.
+
 =cut
 
 our @EXPORT_OK = qw(arity min_arity max_arity);
