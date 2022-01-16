@@ -4,10 +4,11 @@ package Acme::Signature::Arity;
 use strict;
 use warnings;
 
-our $VERSION = '0.001';
+our $VERSION = '0.002';
 our $AUTHORITY;
 
 use B;
+use List::Util qw(min);
 use experimental qw(signatures);
 
 use parent qw(Exporter);
@@ -30,8 +31,8 @@ demonstrate where to look if you wanted to write something proper, though.
 
 =cut
 
-our @EXPORT_OK = qw(arity min_arity max_arity);
-our @EXPORT = @EXPORT_OK;
+our @EXPORT_OK = qw(arity min_arity max_arity coderef_ignoring_extra);
+our @EXPORT = qw(min_arity max_arity);
 
 =head1 Exported functions
 
@@ -82,9 +83,9 @@ Should also work when there are no signatures, just gives C<undef> again.
 =cut
 
 sub max_arity ($code) {
-    my ($minimum, $optional, $slurp) = arity($code);
+    my ($scalars, $optional, $slurp) = arity($code);
     return undef if $slurp;
-    return $minimum
+    return $scalars
 }
 
 =head2 min_arity
@@ -99,8 +100,58 @@ Should also work when there are no signatures, returning 0 in that case.
 =cut
 
 sub min_arity ($code) {
-    my ($minimum, $optional, $slurp) = arity($code);
-    return $minimum - $optional;
+    my ($scalars, $optional, $slurp) = arity($code);
+    return $scalars - $optional;
+}
+
+=head2 coderef_ignoring_extra
+
+Given a coderef, returns a coderef (either the original or wrapped)
+which won't complain if you try to pass more parameters than it was expecting.
+
+This is intended for library authors in situations like this:
+
+ $useful_library->each(sub ($item) { say "item here: $item" });
+
+where you later want to add optional new parameters, and don't trust your users
+to include the mandatory C<< , @ >> signature definition that indicates excess
+parameters can be dropped.
+
+Usage - let's say your first library version looked like this:
+
+ sub each ($self, $callback) {
+  my $code = $callback;
+  for my $item ($self->{items}->@*) {
+   $code->($item);
+  }
+ }
+
+and you later want to pass the index as an extra parameter, without breaking existing code
+that assumed there would only ever be one callback parameter...
+
+ sub each ($self, $callback) {
+  my $code = coderef_ignoring_extra($callback);
+  for my $idx (0..$#{$self->{items}}) {
+   $code->($self->{items}{$idx}, $idx);
+  }
+ }
+
+Your library is now at least somewhat backwards-compatible, without sacrificing too
+many signature-related arity checking features: code expecting the new version
+will still complain if required parameters are not provided.
+
+=cut
+
+sub coderef_ignoring_extra ($code) {
+    my ($scalars, $optional, $slurp) = arity($code);
+    # If we're accepting unlimited parameters, no need to do any more work
+    return $code if $slurp;
+
+    my $max_index = $scalars - 1;
+    return sub (@args) {
+        # Some parameters may be optional, so we allow shorter lists as well
+        $code->(@args ? @args[0 .. min($#args, $max_index)] : ());
+    }
 }
 
 1;

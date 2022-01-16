@@ -60,6 +60,45 @@ Exported functions
     Should also work when there are no signatures, returning 0 in that
     case.
 
+ coderef_ignoring_extra
+
+    Given a coderef, returns a coderef (either the original or wrapped)
+    which won't complain if you try to pass more parameters than it was
+    expecting.
+
+    This is intended for library authors in situations like this:
+
+     $useful_library->each(sub ($item) { say "item here: $item" });
+
+    where you later want to add optional new parameters, and don't trust
+    your users to include the mandatory , @ signature definition that
+    indicates excess parameters can be dropped.
+
+    Usage - let's say your first library version looked like this:
+
+     sub each ($self, $callback) {
+      my $code = $callback;
+      for my $item ($self->{items}->@*) {
+       $code->($item);
+      }
+     }
+
+    and you later want to pass the index as an extra parameter, without
+    breaking existing code that assumed there would only ever be one
+    callback parameter...
+
+     sub each ($self, $callback) {
+      my $code = coderef_ignoring_extra($callback);
+      for my $idx (0..$#{$self->{items}}) {
+       $code->($self->{items}{$idx}, $idx);
+      }
+     }
+
+    Your library is now at least somewhat backwards-compatible, without
+    sacrificing too many signature-related arity checking features: code
+    expecting the new version will still complain if required parameters
+    are not provided.
+
 AUTHOR
 
     TEAM@cpan.org

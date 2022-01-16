@@ -24,6 +24,7 @@ do { my $x = {
        'runtime' => {
                       'requires' => {
                                       'B' => '0',
+                                      'List::Util' => '0',
                                       'experimental' => '0'
                                     }
                     },

@@ -25,4 +25,11 @@ for my $case (
     };
 }
 
+is(eval {
+    Acme::Signature::Arity::coderef_ignoring_extra(sub ($x) {
+        die 'invalid data passed' unless $x eq "first"
+    })->("first", "second", 3, 4);
+    1
+}, 1) or note explain $@;
+
 done_testing;
