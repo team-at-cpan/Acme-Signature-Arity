@@ -3,6 +3,9 @@ package Acme::Signature::Arity;
 use strict;
 use warnings;
 
+our $VERSION = '0.001';
+our $AUTHORITY;
+
 use B;
 use experimental qw(signatures);
 
