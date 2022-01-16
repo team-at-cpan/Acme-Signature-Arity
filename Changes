@@ -1,6 +1,9 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+    [New features]
+
+    - coderef_ignoring_extra, for library authors
 
 0.001     2022-01-16 21:02:08+08:00 Asia/Kuala_Lumpur
     [New features]
