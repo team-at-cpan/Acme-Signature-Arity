@@ -1,4 +1,5 @@
 package Acme::Signature::Arity;
+# ABSTRACT: find out how a piece of code expects to be called
 
 use strict;
 use warnings;
