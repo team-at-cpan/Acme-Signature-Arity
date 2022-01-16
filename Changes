@@ -1,6 +1,9 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+    [Bugs fixed]
+
+    - dependencies updated to require perl v5.26+, when signatures were a bit more stable
 
 0.002     2022-01-16 21:34:59+08:00 Asia/Kuala_Lumpur
     [New features]
